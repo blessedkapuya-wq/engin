@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection testing endpoint
+    match /test/connection {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Validation for Engine Licenses
+    function isValidEngineLicense(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.code is string && data.code.size() <= 50
+        && data.buyerName is string && data.buyerName.size() <= 100
+        && data.createdAt is string && data.createdAt.size() <= 50
+        && data.isActive is bool
+        && (!('email' in data) || (data.email is string && data.email.size() <= 120))
+        && (!('orderId' in data) || (data.orderId is string && data.orderId.size() <= 80))
+        && (!('paymentStatus' in data) || (data.paymentStatus is string && data.paymentStatus.size() <= 30))
+        && (!('paymentMethod' in data) || (data.paymentMethod is string && data.paymentMethod.size() <= 60))
+        && (!('amount' in data) || (data.amount is number && data.amount >= 0))
+        && (!('currency' in data) || (data.currency is string && data.currency.size() <= 10))
+        && (!('activated' in data) || data.activated is bool)
+        && (!('activatedAt' in data) || (data.activatedAt is string && data.activatedAt.size() <= 50))
+        && (!('emailResentAt' in data) || (data.emailResentAt is string && data.emailResentAt.size() <= 50))
+        && (!('notes' in data) || (data.notes is string && data.notes.size() <= 300))
+        && (!('source' in data) || (data.source is string && data.source.size() <= 40));
+    }
+
+    match /engine_licenses/{licenseId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(licenseId) && isValidEngineLicense(request.resource.data);
+      allow delete: if isValidId(licenseId);
+    }
+
+    // Validation for Engine Orders
+    function isValidEngineOrder(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.buyerName is string && data.buyerName.size() <= 100
+        && data.amount is number && data.amount >= 0
+        && data.paymentMethod is string && data.paymentMethod.size() <= 60
+        && data.licenseCode is string && data.licenseCode.size() <= 50
+        && data.timestamp is string && data.timestamp.size() <= 50
+        && (!('email' in data) || (data.email is string && data.email.size() <= 120))
+        && (!('currency' in data) || (data.currency is string && data.currency.size() <= 10))
+        && (!('referenceId' in data) || (data.referenceId is string && data.referenceId.size() <= 80))
+        && (!('status' in data) || (data.status is string && data.status.size() <= 30))
+        && (!('source' in data) || (data.source is string && data.source.size() <= 40));
+    }
+
+    match /engine_orders/{orderId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(orderId) && isValidEngineOrder(request.resource.data);
+      allow delete: if isValidId(orderId);
+    }
+
+    // Validation for Engine Settings
+    function isValidEngineSettings(data) {
+      return data.id is string && data.id.size() <= 64
+        && data.priceTZS is number && data.priceTZS >= 0
+        && data.priceUSD is number && data.priceUSD >= 0
+        && data.sellerWhatsApp is string && data.sellerWhatsApp.size() <= 30
+        && (!('lipaNamba' in data) || (data.lipaNamba is string && data.lipaNamba.size() <= 30))
+        && (!('lipaName' in data) || (data.lipaName is string && data.lipaName.size() <= 100))
+        && (!('selarCheckoutUrl' in data) || (data.selarCheckoutUrl is string && data.selarCheckoutUrl.size() <= 300))
+        && (!('makeWebhookUrl' in data) || (data.makeWebhookUrl is string && data.makeWebhookUrl.size() <= 300))
+        && (!('supabaseProjectUrl' in data) || (data.supabaseProjectUrl is string && data.supabaseProjectUrl.size() <= 300))
+        && (!('supabaseAnonKey' in data) || (data.supabaseAnonKey is string && data.supabaseAnonKey.size() <= 300))
+        && (!('guideTitle' in data) || (data.guideTitle is string && data.guideTitle.size() <= 120))
+        && (!('adminPin' in data) || (data.adminPin is string && data.adminPin.size() <= 50))
+        && (!('buyerReviews' in data) || (data.buyerReviews is list && data.buyerReviews.size() <= 12))
+        && (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50));
+    }
+
+    match /engine_settings/{settingId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(settingId) && isValidEngineSettings(request.resource.data);
+      allow delete: if false;
+    }
+
+    // Validation for Buyer Workspaces
+    function isValidEngineWorkspace(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.licenseCode is string && data.licenseCode.size() <= 50
+        && data.updatedAt is string && data.updatedAt.size() <= 50
+        && (!('onboardingDone' in data) || data.onboardingDone is bool)
+        && (!('startHereChecklist' in data) || data.startHereChecklist is map)
+        && (!('completedSprintDays' in data) || data.completedSprintDays is map)
+        && (!('offerWorksheet' in data) || data.offerWorksheet is map)
+        && (!('scorecardRows' in data) || (data.scorecardRows is list && data.scorecardRows.size() <= 20));
+    }
+
+    match /engine_workspaces/{workspaceId} {
+      allow get, list: if true;
+      allow create, update: if isValidId(workspaceId) && isValidEngineWorkspace(request.resource.data);
+      allow delete: if isValidId(workspaceId);
+    }
+  }
+}

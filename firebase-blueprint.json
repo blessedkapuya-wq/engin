@@ -1,0 +1,103 @@
+{
+  "entities": {
+    "EngineLicense": {
+      "title": "EngineLicense",
+      "description": "Access code and customer activation record for The Quiet Sales Engine",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "code": { "type": "string", "maxLength": 50 },
+        "buyerName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "orderId": { "type": "string", "maxLength": 80 },
+        "paymentStatus": { "type": "string", "enum": ["Paid", "Pending", "Revoked"] },
+        "paymentMethod": { "type": "string", "maxLength": 60 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "isActive": { "type": "boolean" },
+        "activated": { "type": "boolean" },
+        "activatedAt": { "type": "string", "maxLength": 50 },
+        "emailResentAt": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "source": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "code", "buyerName", "createdAt", "isActive"]
+    },
+    "EngineOrder": {
+      "title": "EngineOrder",
+      "description": "Automated or manually recorded purchase transaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "buyerName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 120 },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "paymentMethod": { "type": "string", "maxLength": 60 },
+        "referenceId": { "type": "string", "maxLength": 80 },
+        "licenseCode": { "type": "string", "maxLength": 50 },
+        "timestamp": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["Paid", "Pending", "Revoked"] },
+        "source": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "buyerName", "amount", "paymentMethod", "licenseCode", "timestamp"]
+    },
+    "EngineSettings": {
+      "title": "EngineSettings",
+      "description": "Seller storefront configuration, pricing, WhatsApp details, and Selar/Make/Supabase endpoints",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "priceTZS": { "type": "number" },
+        "priceUSD": { "type": "number" },
+        "sellerWhatsApp": { "type": "string", "maxLength": 30 },
+        "lipaNamba": { "type": "string", "maxLength": 30 },
+        "lipaName": { "type": "string", "maxLength": 100 },
+        "selarCheckoutUrl": { "type": "string", "maxLength": 300 },
+        "makeWebhookUrl": { "type": "string", "maxLength": 300 },
+        "supabaseProjectUrl": { "type": "string", "maxLength": 300 },
+        "supabaseAnonKey": { "type": "string", "maxLength": 300 },
+        "guideTitle": { "type": "string", "maxLength": 120 },
+        "adminPin": { "type": "string", "maxLength": 50 },
+        "buyerReviews": { "type": "array" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "priceTZS", "priceUSD", "sellerWhatsApp"]
+    },
+    "EngineWorkspace": {
+      "title": "EngineWorkspace",
+      "description": "Saved buyer onboarding checklist, offer worksheet, 7-day plan progress, and weekly scorecard",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "licenseCode": { "type": "string", "maxLength": 50 },
+        "onboardingDone": { "type": "boolean" },
+        "startHereChecklist": { "type": "object" },
+        "completedSprintDays": { "type": "object" },
+        "offerWorksheet": { "type": "object" },
+        "scorecardRows": { "type": "array" },
+        "updatedAt": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "licenseCode", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/engine_licenses/{licenseId}": {
+      "schema": "EngineLicense",
+      "description": "Cloud-persisted customer access codes, email records, and activation telemetry"
+    },
+    "/engine_orders/{orderId}": {
+      "schema": "EngineOrder",
+      "description": "Cloud-persisted purchase records from Mobile Money, Selar, or Admin"
+    },
+    "/engine_settings/{settingId}": {
+      "schema": "EngineSettings",
+      "description": "Global storefront pricing, WhatsApp, Selar checkout link, and Make/Supabase endpoints"
+    },
+    "/engine_workspaces/{workspaceId}": {
+      "schema": "EngineWorkspace",
+      "description": "Saved buyer offer worksheet, onboarding state, and weekly scorecard keyed by license code"
+    }
+  }
+}

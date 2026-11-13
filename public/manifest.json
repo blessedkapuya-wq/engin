@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "The Quiet Sales Engine · BiasharaBase",
+  "short_name": "QuietSales",
+  "description": "The No-Reels Text & DM System for Selling Digital Products & Services on biasharabase.com.",
+  "theme_color": "#111111",
+  "background_color": "#F5F5F3",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "The Quiet Sales Engine",
+  "description": "The No-Reels Text & DM System for Selling Digital Products, Notion Templates & Freelance Services by BiasharaBase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
